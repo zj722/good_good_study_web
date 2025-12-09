@@ -6,7 +6,6 @@ import { ArrowRight, Sparkles, Gift } from 'lucide-react';
 interface HomeViewProps {
   subjects: Subject[];
   onSelectSubject: (id: string) => void;
-  onNavigate?: (target: string) => void;
 }
 
 const navItems = [
@@ -18,7 +17,7 @@ const navItems = [
 
 const suggestionHighlights = [
   '每月梳理社区灵感，记录并优先实现高频反馈，为下一轮更新提供方向。',
-  '在提案里排序高频需求，确保我们用新更新验证真实的使用场景。',
+  '在提案里排序出高频需求，确保更新验证真实的使用场景。',
   '提交时直接说明想跟进的原理、呈现形式或潜在问题，反馈直达团队。'
 ];
 
@@ -61,18 +60,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ subjects, onSelectSubject })
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
             {navItems.map(item => (
-              <a
-                key={item.target}
-                href={item.target}
-                className="hover:text-slate-900 transition"
-                onClick={e => {
-                  if (!item.target) return;
-                  if (onNavigate) {
-                    e.preventDefault();
-                    onNavigate(item.target);
-                  }
-                }}
-              >
+              <a key={item.target} href={item.target} className="hover:text-slate-900 transition">
                 {item.label}
               </a>
             ))}
@@ -89,16 +77,17 @@ export const HomeView: React.FC<HomeViewProps> = ({ subjects, onSelectSubject })
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="flex w-full max-w-6xl flex-col gap-12 items-start"
+          className="flex w-full flex-col gap-12 items-start"
         >
           <div className="flex flex-col gap-4">
-            <p className="text-sm uppercase tracking-[0.4em] text-slate-400">Intuitivelab</p>
+            <p className="text-sm uppercase tracking-[0.4em] text-slate-400">独立开发者</p>
             <h1 className="text-4xl font-black text-slate-900 md:text-6xl">
               让抽象的理论，变得触手可及。
             </h1>
             <p className="max-w-3xl text-lg text-slate-600">
-              告别晦涩的课本，我们用动态交互演示，带你完成一场知识体系的重构。从最底层的基本原理出发，
-              层层向上推演。你将亲眼见证那些抽象的数学定义，如何严丝合缝地逻辑咬合，最终支撑起现代工程的宏大顶层。
+              告别晦涩的课本，我们用动态交互演示，带你完成一场知识体系的重构。
+              从最底层的基本原理出发，层层向上推演。
+              你将亲眼见证那些抽象的数学定义，如何严丝合缝地逻辑咬合，最终支撑起现代工程的宏大顶层。
             </p>
           </div>
 
@@ -122,7 +111,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ subjects, onSelectSubject })
           </div>
         </motion.section>
 
-        <section id="self" className="w-full max-w-6xl border-t border-slate-100 pt-16">
+        <section id="self" className="w-full border-t border-slate-100 pt-16">
           <div className="flex flex-col gap-6 text-left">
             <h2 className="text-3xl font-bold text-slate-900">自我介绍</h2>
             <p className="text-slate-600 max-w-4xl">
@@ -132,7 +121,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ subjects, onSelectSubject })
           </div>
         </section>
 
-        <section id="courses" className="w-full max-w-6xl border-t border-slate-100 pt-16">
+        <section id="courses" className="w-full border-t border-slate-100 pt-16">
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-3xl font-bold text-slate-900">课程</h2>
@@ -164,88 +153,84 @@ export const HomeView: React.FC<HomeViewProps> = ({ subjects, onSelectSubject })
           </div>
         </section>
 
-        <section id="suggestions" className="w-full max-w-6xl border-t border-slate-100 pt-16">
-          <div className="flex w-full flex-col gap-6">
+        <section id="suggestions" className="w-full border-t border-slate-100 pt-16">
+          <div className="flex flex-col gap-5">
             <div className="flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">
               <Sparkles size={16} />
               建议共建
             </div>
             <h2 className="text-3xl font-bold text-slate-900">欢迎一切建议！</h2>
             <p className="text-slate-600 max-w-3xl">
-              每月梳理社区灵感，你的声音会被记录、优先实现，成为下一轮更新的核心。我们把最热门的提案排列在更新计划前沿，让你持续感受到参与感。
+              每月梳理社区灵感，你的声音会被记录、优先实现，成为下一轮更新的核心。
             </p>
-            <div className="text-sm text-slate-500 space-y-3 pl-1">
-              {suggestionHighlights.map(highlight => (
-                <p key={highlight} className="leading-relaxed">{highlight}</p>
+            <div className="flex flex-col gap-2 text-sm text-slate-500 pl-1">
+              {suggestionHighlights.map((text, idx) => (
+                <p key={idx} className="leading-relaxed">
+                  · {text}
+                </p>
               ))}
             </div>
-            <div className="flex flex-col gap-5">
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-[0.3em]">三步对话</p>
-              <p className="text-sm text-slate-500">
-                用下面三个表单区分别说明希望更新的科目、想要展现的内容，以及其他建议。选“其他”后可输入自定义内容。
-              </p>
-              <div className="grid gap-6 md:grid-cols-3">
-                <div className="flex flex-col gap-4">
-                  <p className="text-sm font-semibold text-slate-600">希望更新的科目（可多选）</p>
-                  <div className="flex flex-col gap-2">
-                    {subjectOptions.map(option => (
-                      <label key={option} className="inline-flex cursor-pointer items-center gap-2 text-sm text-slate-700">
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                          checked={selectedSubjects.includes(option)}
-                          onChange={() => toggleSelection(option, setSelectedSubjects)}
-                        />
-                        {option}
-                      </label>
-                    ))}
-                  </div>
-                  {isOtherSelected(selectedSubjects) && (
-                    <input
-                      value={customSubject}
-                      onChange={e => setCustomSubject(e.target.value)}
-                      placeholder="请描述其他希望更新的科目"
-                      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none"
-                    />
-                  )}
+            <div className="grid gap-6 md:grid-cols-3">
+              <div className="flex flex-col gap-3">
+                <p className="text-sm font-semibold text-slate-600">希望更新的科目（可多选）</p>
+                <div className="flex flex-col gap-2">
+                  {subjectOptions.map(option => (
+                    <label key={option} className="inline-flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                        checked={selectedSubjects.includes(option)}
+                        onChange={() => toggleSelection(option, setSelectedSubjects)}
+                      />
+                      {option}
+                    </label>
+                  ))}
                 </div>
-                <div className="flex flex-col gap-4">
-                  <p className="text-sm font-semibold text-slate-600">更新内容方向（可多选）</p>
-                  <div className="flex flex-col gap-2">
-                    {contentOptions.map(option => (
-                      <label key={option} className="inline-flex cursor-pointer items-center gap-2 text-sm text-slate-700">
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                          checked={selectedContents.includes(option)}
-                          onChange={() => toggleSelection(option, setSelectedContents)}
-                        />
-                        {option}
-                      </label>
-                    ))}
-                  </div>
-                  {isOtherSelected(selectedContents) && (
-                    <input
-                      value={customContent}
-                      onChange={e => setCustomContent(e.target.value)}
-                      placeholder="描述你想要的特别呈现"
-                      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none"
-                    />
-                  )}
-                </div>
-                <div className="flex flex-col gap-4">
-                  <p className="text-sm font-semibold text-slate-600">还有其他建议？</p>
-                  <textarea
-                    value={suggestionNotes}
-                    onChange={e => setSuggestionNotes(e.target.value)}
-                    rows={6}
-                    placeholder="补充任何想法、痛点或希望我们深入的方向"
-                    className="min-h-[150px] resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none"
+                {isOtherSelected(selectedSubjects) && (
+                  <input
+                    value={customSubject}
+                    onChange={e => setCustomSubject(e.target.value)}
+                    placeholder="请描述其他希望更新的科目"
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none"
                   />
-                  <button className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-slate-900 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-200 hover:bg-slate-800 transition">
-                    提交对话 <ArrowRight size={14} />
-                  </button>
+                )}
+              </div>
+              <div className="flex flex-col gap-3">
+                <p className="text-sm font-semibold text-slate-600">更新内容方向（可多选）</p>
+                <div className="flex flex-col gap-2">
+                  {contentOptions.map(option => (
+                    <label key={option} className="inline-flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                        checked={selectedContents.includes(option)}
+                        onChange={() => toggleSelection(option, setSelectedContents)}
+                      />
+                      {option}
+                    </label>
+                  ))}
                 </div>
+                {isOtherSelected(selectedContents) && (
+                  <input
+                    value={customContent}
+                    onChange={e => setCustomContent(e.target.value)}
+                    placeholder="描述你想要的特别呈现"
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none"
+                  />
+                )}
+              </div>
+              <div className="flex flex-col gap-3">
+                <p className="text-sm font-semibold text-slate-600">还有其他建议？</p>
+                <textarea
+                  value={suggestionNotes}
+                  onChange={e => setSuggestionNotes(e.target.value)}
+                  rows={6}
+                  placeholder="补充任何想法、痛点或希望我们深入的方向"
+                  className="min-h-[150px] resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none"
+                />
+                <button className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-slate-900 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-200 hover:bg-slate-800 transition">
+                  提交对话 <ArrowRight size={14} />
+                </button>
               </div>
             </div>
           </div>
