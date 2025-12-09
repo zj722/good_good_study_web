@@ -1,69 +1,270 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Subject } from '../types';
-import { Activity, Cpu, Grid, ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles, Gift } from 'lucide-react';
 
 interface HomeViewProps {
   subjects: Subject[];
   onSelectSubject: (id: string) => void;
+  onNavigate?: (target: string) => void;
 }
 
-const iconMap: Record<string, React.ReactNode> = {
-  activity: <Activity size={32} className="text-indigo-600" />,
-  grid: <Grid size={32} className="text-gray-400" />,
-  cpu: <Cpu size={32} className="text-gray-400" />
-};
+const navItems = [
+  { label: '课程', target: '/courses' },
+  { label: '介绍', target: '#self' },
+  { label: '建议共建', target: '#suggestions' },
+  { label: '加入我们', target: '#contact' }
+];
+
+const suggestionHighlights = [
+  '每月梳理社区灵感，记录并优先实现高频反馈，为下一轮更新提供方向。',
+  '在提案里排序高频需求，确保我们用新更新验证真实的使用场景。',
+  '提交时直接说明想跟进的原理、呈现形式或潜在问题，反馈直达团队。'
+];
+
+const subjectOptions = [
+  '信号与系统',
+  '线性代数',
+  '电路设计',
+  '机器学习基础',
+  '其他'
+];
+
+const contentOptions = [
+  '新实验项目',
+  '交互式笔记',
+  '可视化演示',
+  '测试题与练习',
+  '其他'
+];
 
 export const HomeView: React.FC<HomeViewProps> = ({ subjects, onSelectSubject }) => {
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  const [selectedContents, setSelectedContents] = useState<string[]>([]);
+  const [customSubject, setCustomSubject] = useState('');
+  const [customContent, setCustomContent] = useState('');
+  const [suggestionNotes, setSuggestionNotes] = useState('');
+
+  const toggleSelection = (value: string, setter: React.Dispatch<React.SetStateAction<string[]>>) => {
+    setter(prev => (prev.includes(value) ? prev.filter(item => item !== value) : [...prev, value]));
+  };
+
+  const isOtherSelected = (list: string[]) => list.includes('其他');
+
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center px-6 relative overflow-hidden">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="text-center mb-16 z-10"
-      >
-        <h1 className="text-6xl font-bold tracking-tight text-gray-900 mb-4">Nexus</h1>
-        <p className="text-xl text-gray-500 max-w-lg mx-auto">
-          Explore knowledge through connections. Choose a domain to begin your journey.
-        </p>
-      </motion.div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl z-10">
-        {subjects.map((subject, index) => (
-          <motion.div
-            key={subject.id}
-            layoutId={`card-${subject.id}`}
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1, duration: 0.6, ease: "easeOut" }}
-            whileHover={{ y: -8, scale: 1.02, boxShadow: "0 20px 40px -10px rgba(0,0,0,0.1)" }}
-            onClick={() => subject.id === 'signals' ? onSelectSubject(subject.id) : null}
-            className={`
-              bg-white rounded-3xl p-8 h-80 flex flex-col justify-between border border-gray-100 shadow-sm cursor-pointer group relative overflow-hidden
-              ${subject.id !== 'signals' ? 'opacity-50 grayscale cursor-not-allowed' : ''}
-            `}
-          >
-             {/* Decorative Background Blob */}
-            <div className={`absolute -top-10 -right-10 w-32 h-32 bg-gray-50 rounded-full blur-3xl transition-colors duration-500 group-hover:bg-indigo-50`} />
-            
-            <div className="relative">
-              <div className="mb-6 p-3 bg-gray-50 rounded-2xl w-fit group-hover:bg-indigo-50 transition-colors duration-300">
-                {iconMap[subject.icon]}
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">{subject.title}</h2>
-              <p className="text-gray-500 text-sm leading-relaxed">{subject.description}</p>
-            </div>
-
-            <div className="flex items-center text-sm font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
-              Explore Map <ArrowRight size={16} className="ml-2" />
-            </div>
-          </motion.div>
-        ))}
+    <div className="bg-white min-h-screen text-slate-900 font-sans">
+      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-100">
+        <div className="mx-auto flex max-w-6xl w-full items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-2 text-lg font-black tracking-tight text-indigo-600">
+            <Gift size={24} />
+            Intuitivelab
+          </div>
+          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+            {navItems.map(item => (
+              <a
+                key={item.target}
+                href={item.target}
+                className="hover:text-slate-900 transition"
+                onClick={e => {
+                  if (!item.target) return;
+                  if (onNavigate) {
+                    e.preventDefault();
+                    onNavigate(item.target);
+                  }
+                }}
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+          <button className="rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-200">
+            捐赠
+          </button>
+        </div>
       </div>
-      
-      {/* Background Subtle texture */}
-      <div className="absolute inset-0 z-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-24 px-6 pb-24 pt-12 items-start">
+        <motion.section
+          id="hero"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="flex w-full max-w-6xl flex-col gap-12 items-start"
+        >
+          <div className="flex flex-col gap-4">
+            <p className="text-sm uppercase tracking-[0.4em] text-slate-400">Intuitivelab</p>
+            <h1 className="text-4xl font-black text-slate-900 md:text-6xl">
+              让抽象的理论，变得触手可及。
+            </h1>
+            <p className="max-w-3xl text-lg text-slate-600">
+              告别晦涩的课本，我们用动态交互演示，带你完成一场知识体系的重构。从最底层的基本原理出发，
+              层层向上推演。你将亲眼见证那些抽象的数学定义，如何严丝合缝地逻辑咬合，最终支撑起现代工程的宏大顶层。
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-4">
+            <button className="rounded-full border border-slate-200 bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-200 hover:bg-slate-800 transition">
+              注册
+            </button>
+          </div>
+
+          <div className="grid gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-6 shadow-sm md:grid-cols-3">
+            {[
+              '原理的直观呈现，让你看见每个定义背后的样子',
+              '清晰的知识链接，呈现从数学到工程的依赖路径',
+              '可复用的笔记，把体验转成真实交付'
+            ].map((item, index) => (
+              <div key={item} className="flex flex-col gap-2 text-sm">
+                <span className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-400">亮点 {index + 1}</span>
+                <p className="font-semibold text-slate-900">{item}</p>
+              </div>
+            ))}
+          </div>
+        </motion.section>
+
+        <section id="self" className="w-full max-w-6xl border-t border-slate-100 pt-16">
+          <div className="flex flex-col gap-6 text-left">
+            <h2 className="text-3xl font-bold text-slate-900">自我介绍</h2>
+            <p className="text-slate-600 max-w-4xl">
+              我是 Intuitivelab 的创始人，致力于教授 Web 与 AI 的系统思维。我的目标是减少压迫感，同时
+              增加理解深度——你会在这里看到周到的示例、可复用的范式，以及我与你一起把作品推向完成的态度。
+            </p>
+          </div>
+        </section>
+
+        <section id="courses" className="w-full max-w-6xl border-t border-slate-100 pt-16">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-bold text-slate-900">课程</h2>
+                <span className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">实时更新</span>
+              </div>
+              <p className="text-slate-600 max-w-3xl">
+                每门课程都链接到精心策划的知识图谱与交互课件。点击卡片即可进入概念地图的深度漫游。
+              </p>
+            </div>
+          <div className="mt-8 grid gap-6 md:grid-cols-3">
+            {subjects.map(subject => (
+              <motion.div
+                key={subject.id}
+                className="flex flex-col justify-between gap-4 rounded-3xl border border-slate-100 bg-slate-50 p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: 'spring', stiffness: 200 }}
+                onClick={() => onSelectSubject(subject.id)}
+              >
+                <div>
+                  <div className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-400">{subject.icon}</div>
+                  <h3 className="text-2xl font-bold text-slate-900">{subject.title}</h3>
+                  <p className="mt-2 text-sm text-slate-500">{subject.description}</p>
+                </div>
+                <div className="flex items-center gap-2 text-sm font-semibold text-indigo-600">
+                  进入图谱 <ArrowRight size={14} />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        <section id="suggestions" className="w-full max-w-6xl border-t border-slate-100 pt-16">
+          <div className="flex w-full flex-col gap-6">
+            <div className="flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">
+              <Sparkles size={16} />
+              建议共建
+            </div>
+            <h2 className="text-3xl font-bold text-slate-900">欢迎一切建议！</h2>
+            <p className="text-slate-600 max-w-3xl">
+              每月梳理社区灵感，你的声音会被记录、优先实现，成为下一轮更新的核心。我们把最热门的提案排列在更新计划前沿，让你持续感受到参与感。
+            </p>
+            <div className="text-sm text-slate-500 space-y-3 pl-1">
+              {suggestionHighlights.map(highlight => (
+                <p key={highlight} className="leading-relaxed">{highlight}</p>
+              ))}
+            </div>
+            <div className="flex flex-col gap-5">
+              <p className="text-sm font-semibold text-slate-500 uppercase tracking-[0.3em]">三步对话</p>
+              <p className="text-sm text-slate-500">
+                用下面三个表单区分别说明希望更新的科目、想要展现的内容，以及其他建议。选“其他”后可输入自定义内容。
+              </p>
+              <div className="grid gap-6 md:grid-cols-3">
+                <div className="flex flex-col gap-4">
+                  <p className="text-sm font-semibold text-slate-600">希望更新的科目（可多选）</p>
+                  <div className="flex flex-col gap-2">
+                    {subjectOptions.map(option => (
+                      <label key={option} className="inline-flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                          checked={selectedSubjects.includes(option)}
+                          onChange={() => toggleSelection(option, setSelectedSubjects)}
+                        />
+                        {option}
+                      </label>
+                    ))}
+                  </div>
+                  {isOtherSelected(selectedSubjects) && (
+                    <input
+                      value={customSubject}
+                      onChange={e => setCustomSubject(e.target.value)}
+                      placeholder="请描述其他希望更新的科目"
+                      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none"
+                    />
+                  )}
+                </div>
+                <div className="flex flex-col gap-4">
+                  <p className="text-sm font-semibold text-slate-600">更新内容方向（可多选）</p>
+                  <div className="flex flex-col gap-2">
+                    {contentOptions.map(option => (
+                      <label key={option} className="inline-flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                          checked={selectedContents.includes(option)}
+                          onChange={() => toggleSelection(option, setSelectedContents)}
+                        />
+                        {option}
+                      </label>
+                    ))}
+                  </div>
+                  {isOtherSelected(selectedContents) && (
+                    <input
+                      value={customContent}
+                      onChange={e => setCustomContent(e.target.value)}
+                      placeholder="描述你想要的特别呈现"
+                      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none"
+                    />
+                  )}
+                </div>
+                <div className="flex flex-col gap-4">
+                  <p className="text-sm font-semibold text-slate-600">还有其他建议？</p>
+                  <textarea
+                    value={suggestionNotes}
+                    onChange={e => setSuggestionNotes(e.target.value)}
+                    rows={6}
+                    placeholder="补充任何想法、痛点或希望我们深入的方向"
+                    className="min-h-[150px] resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none"
+                  />
+                  <button className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-slate-900 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-200 hover:bg-slate-800 transition">
+                    提交对话 <ArrowRight size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="contact" className="w-full max-w-6xl border-t border-slate-100 pt-16">
+          <div className="flex flex-col gap-4 rounded-3xl border border-slate-100 bg-slate-50 p-10 shadow-sm">
+            <h2 className="text-3xl font-bold text-slate-900">加入我们</h2>
+            <p className="text-slate-600">
+              有问题？想了解下一期？发送邮件或关注我们的社群，保持与学习路径同步。
+            </p>
+            <div className="flex flex-wrap items-center gap-4 text-sm font-semibold text-indigo-600">
+              <span>hello@intuitivelab.com</span>
+              <span className="text-slate-400">•</span>
+              <span>安排通话</span>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 };

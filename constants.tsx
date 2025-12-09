@@ -14,9 +14,9 @@ export const SUBJECTS: Subject[] = [
     icon: 'grid'
   },
   {
-    id: 'circuits',
-    title: 'Circuits',
-    description: 'Design and analysis of electronic circuits and components.',
+    id: 'math_for_machinelearning',
+    title: 'Mathmetics For Machine Learning',
+    description: 'Explore how math works behind machine learning algorithms',
     icon: 'cpu'
   }
 ];

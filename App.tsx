@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { HomeView } from './components/HomeView';
 import { ChapterView } from './components/ChapterView';
 import { MapView } from './components/MapView';
 import { ContentView } from './components/ContentView';
+import { CoursesPage } from './components/CoursesPage';
 import { SUBJECTS, CHAPTERS } from './constants';
 import { ViewState } from './types';
 
@@ -12,6 +13,7 @@ export default function App() {
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
   const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [route, setRoute] = useState(() => (typeof window !== 'undefined' ? window.location.pathname : '/'));
 
   // 1. Home -> Chapter List
   const handleSubjectSelect = (id: string) => {
@@ -47,9 +49,58 @@ export default function App() {
     setCurrentView('MAP');
   };
 
+  const handleCourseCardSelect = (id: string) => {
+    navigateTo('/');
+    handleSubjectSelect(id);
+  };
+
+  const navigateTo = (path: string, scrollTarget?: string) => {
+    if (typeof window !== 'undefined') {
+      if (window.location.pathname !== path) {
+        window.history.pushState(null, '', path);
+      }
+    }
+    setRoute(path);
+
+    if (scrollTarget && typeof document !== 'undefined') {
+      setTimeout(() => {
+        const element = document.querySelector(scrollTarget);
+        element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+  };
+
+  const handleNavigateLink = (target: string) => {
+    if (target === '/courses') {
+      navigateTo('/courses');
+      return;
+    }
+    navigateTo('/', target.startsWith('#') ? target : undefined);
+  };
+
   // Data helpers
   const currentSubject = SUBJECTS.find(s => s.id === selectedSubjectId);
   const subjectChapters = CHAPTERS.filter(c => c.subjectId === selectedSubjectId);
+
+  useEffect(() => {
+    const handlePopstate = () => {
+      if (typeof window !== 'undefined') {
+        setRoute(window.location.pathname);
+      }
+    };
+    window.addEventListener('popstate', handlePopstate);
+    return () => window.removeEventListener('popstate', handlePopstate);
+  }, []);
+
+  if (route === '/courses') {
+    return (
+      <CoursesPage
+        subjects={SUBJECTS}
+        onSelectSubject={handleCourseCardSelect}
+        onBackHome={() => navigateTo('/')}
+      />
+    );
+  }
 
   return (
     <div className="bg-white min-h-screen font-sans text-slate-900">
@@ -60,6 +111,7 @@ export default function App() {
             key="home" 
             subjects={SUBJECTS} 
             onSelectSubject={handleSubjectSelect} 
+            onNavigate={handleNavigateLink}
           />
         )}
 
