@@ -5,6 +5,10 @@ import { ChapterView } from './components/ChapterView';
 import { MapView } from './components/MapView';
 import { ContentView } from './components/ContentView';
 import { CoursesPage } from './components/CoursesPage';
+import { AboutPage } from './components/AboutPage';
+import { SuggestionsPage } from './components/SuggestionsPage';
+import { JoinPage } from './components/JoinPage';
+import { DonatePage } from './components/DonatePage';
 import { SUBJECTS, CHAPTERS } from './constants';
 import { ViewState } from './types';
 
@@ -38,6 +42,7 @@ export default function App() {
     setCurrentView('HOME');
     setSelectedSubjectId(null);
     setSelectedChapterId(null);
+    setSelectedNodeId(null);
   };
 
   const goBackToChapters = () => {
@@ -55,6 +60,10 @@ export default function App() {
   };
 
   const navigateTo = (path: string, scrollTarget?: string) => {
+    if (path === '/') {
+      goHome();
+    }
+
     if (typeof window !== 'undefined') {
       if (window.location.pathname !== path) {
         window.history.pushState(null, '', path);
@@ -71,11 +80,7 @@ export default function App() {
   };
 
   const handleNavigateLink = (target: string) => {
-    if (target === '/courses') {
-      navigateTo('/courses');
-      return;
-    }
-    navigateTo('/', target.startsWith('#') ? target : undefined);
+    navigateTo(target);
   };
 
   // Data helpers
@@ -85,7 +90,11 @@ export default function App() {
   useEffect(() => {
     const handlePopstate = () => {
       if (typeof window !== 'undefined') {
-        setRoute(window.location.pathname);
+        const newPath = window.location.pathname;
+        setRoute(newPath);
+        if (newPath === '/') {
+          goHome();
+        }
       }
     };
     window.addEventListener('popstate', handlePopstate);
@@ -98,8 +107,25 @@ export default function App() {
         subjects={SUBJECTS}
         onSelectSubject={handleCourseCardSelect}
         onBackHome={() => navigateTo('/')}
+        onNavigate={navigateTo}
       />
     );
+  }
+
+  if (route === '/about') {
+    return <AboutPage onNavigate={navigateTo} />;
+  }
+
+  if (route === '/suggestions') {
+    return <SuggestionsPage onNavigate={navigateTo} />;
+  }
+
+  if (route === '/join') {
+    return <JoinPage onNavigate={navigateTo} />;
+  }
+
+  if (route === '/donate') {
+    return <DonatePage onNavigate={navigateTo} />;
   }
 
   return (

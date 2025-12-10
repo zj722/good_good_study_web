@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Subject } from '../types';
-import { ArrowRight, Sparkles, Gift } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
+import { NavigationBar } from './NavigationBar';
 
 interface HomeViewProps {
   subjects: Subject[];
   onSelectSubject: (id: string) => void;
+  onNavigate: (path: string) => void;
 }
-
-const navItems = [
-  { label: '课程', target: '/courses' },
-  { label: '介绍', target: '#self' },
-  { label: '建议共建', target: '#suggestions' },
-  { label: '加入我们', target: '#contact' }
-];
 
 const suggestionHighlights = [
   '每月梳理社区灵感，记录并优先实现高频反馈，为下一轮更新提供方向。',
@@ -37,7 +32,7 @@ const contentOptions = [
   '其他'
 ];
 
-export const HomeView: React.FC<HomeViewProps> = ({ subjects, onSelectSubject }) => {
+export const HomeView: React.FC<HomeViewProps> = ({ subjects, onSelectSubject, onNavigate }) => {
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [selectedContents, setSelectedContents] = useState<string[]>([]);
   const [customSubject, setCustomSubject] = useState('');
@@ -52,24 +47,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ subjects, onSelectSubject })
 
   return (
     <div className="bg-white min-h-screen text-slate-900 font-sans">
-      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-100">
-        <div className="mx-auto flex max-w-6xl w-full items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2 text-lg font-black tracking-tight text-indigo-600">
-            <Gift size={24} />
-            Intuitivelab
-          </div>
-          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
-            {navItems.map(item => (
-              <a key={item.target} href={item.target} className="hover:text-slate-900 transition">
-                {item.label}
-              </a>
-            ))}
-          </div>
-          <button className="rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-200">
-            捐赠
-          </button>
-        </div>
-      </div>
+      <NavigationBar onNavigate={onNavigate} />
 
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-24 px-6 pb-24 pt-12 items-start">
         <motion.section

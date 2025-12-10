@@ -2,35 +2,44 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Subject } from '../types';
+import { NavigationBar } from './NavigationBar';
 
 interface CoursesPageProps {
   subjects: Subject[];
   onSelectSubject: (id: string) => void;
   onBackHome: () => void;
+  onNavigate: (path: string) => void;
 }
 
-export const CoursesPage: React.FC<CoursesPageProps> = ({ subjects, onSelectSubject, onBackHome }) => {
+export const CoursesPage: React.FC<CoursesPageProps> = ({ subjects, onSelectSubject, onBackHome, onNavigate }) => {
   return (
     <div className="bg-white min-h-screen text-slate-900 font-sans">
-      <header className="sticky top-0 z-30 flex w-full items-center justify-between border-b border-slate-100 bg-white/95 px-6 py-4 backdrop-blur">
-        <button
-          onClick={onBackHome}
-          className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm hover:bg-slate-50"
-        >
-          <ArrowLeft size={16} />
-          返回主页
-        </button>
-        <div className="text-lg font-black tracking-tight text-indigo-600">Intuitivelab</div>
-        <div className="w-24" />
-      </header>
+      <NavigationBar onNavigate={onNavigate} />
 
       <main className="flex flex-col items-center gap-8 px-6 py-12">
-        <div className="text-center">
-          <p className="text-xs uppercase tracking-[0.4em] text-slate-400">课程精选</p>
-          <h1 className="mt-4 text-4xl font-black text-slate-900 md:text-5xl">探索所有课程</h1>
-          <p className="mt-4 max-w-2xl text-base text-slate-600">
-            每一门课程都附带概念地图与交互实验，先了解结构再进入内容，随时返回学习路径。
-          </p>
+        <div className="flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 text-left">
+          <div>
+            <p className="text-xs uppercase tracking-[0.4em] text-slate-400">课程精选</p>
+            <h1 className="mt-4 text-4xl font-black text-slate-900 md:text-5xl">探索所有课程</h1>
+            <p className="mt-4 max-w-2xl text-base text-slate-600">
+              每一门课程都附带概念地图与交互实验，先了解结构再进入内容，随时返回学习路径。
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={onBackHome}
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm hover:bg-slate-50"
+            >
+              <ArrowLeft size={16} />
+              返回主页
+            </button>
+            <button
+              onClick={() => onNavigate('/donate')}
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-200 hover:bg-slate-800 transition"
+            >
+              支持项目
+            </button>
+          </div>
         </div>
 
         <div className="w-full max-w-6xl">
