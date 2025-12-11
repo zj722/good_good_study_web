@@ -9,6 +9,7 @@ import { AboutPage } from './components/AboutPage';
 import { SuggestionsPage } from './components/SuggestionsPage';
 import { JoinPage } from './components/JoinPage';
 import { DonatePage } from './components/DonatePage';
+import { LessonComplexNumbers } from './components/LessonComplexNumbers';
 import { SUBJECTS, CHAPTERS } from './constants';
 import { ViewState } from './types';
 
@@ -131,12 +132,12 @@ export default function App() {
   return (
     <div className="bg-white min-h-screen font-sans text-slate-900">
       <AnimatePresence mode="wait">
-        
+
         {currentView === 'HOME' && (
-          <HomeView 
-            key="home" 
-            subjects={SUBJECTS} 
-            onSelectSubject={handleSubjectSelect} 
+          <HomeView
+            key="home"
+            subjects={SUBJECTS}
+            onSelectSubject={handleSubjectSelect}
             onNavigate={handleNavigateLink}
           />
         )}
@@ -150,9 +151,9 @@ export default function App() {
             onBack={goHome}
           />
         )}
-        
+
         {currentView === 'MAP' && selectedChapterId && (
-          <MapView 
+          <MapView
             key="map"
             chapterId={selectedChapterId}
             onBack={goBackToChapters}
@@ -161,12 +162,20 @@ export default function App() {
         )}
 
         {currentView === 'CONTENT' && selectedNodeId && (
-          <ContentView 
-            key="content"
-            nodeId={selectedNodeId}
-            onBackToMap={goBackToMap}
-            onHome={goHome}
-          />
+          selectedNodeId === 'complex' ? (
+            <LessonComplexNumbers
+              key="lesson-complex"
+              onBack={goBackToMap}
+              onHome={goHome}
+            />
+          ) : (
+            <ContentView
+              key="content"
+              nodeId={selectedNodeId}
+              onBackToMap={goBackToMap}
+              onHome={goHome}
+            />
+          )
         )}
 
       </AnimatePresence>
