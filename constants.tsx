@@ -43,7 +43,7 @@ export const GRAPH_NODES: Node[] = [
   { id: 'complex', label: 'Complex Numbers (i)', x: 30, y: 20, chapterId: 'freq_basics', category: 'fundamental' },
   { id: 'e', label: 'The Number e', x: 70, y: 20, chapterId: 'freq_basics', category: 'fundamental' },
   { id: 'euler', label: "Euler's Formula", x: 50, y: 50, chapterId: 'freq_basics', category: 'core' },
-  { id: 'trig', label: 'Trigonometry', x: 20, y: 50, chapterId: 'freq_basics', category: 'fundamental' },
+  { id: 'trig', label: 'Basic Math Trick', x: 20, y: 50, chapterId: 'freq_basics', category: 'fundamental' },
   { id: 'fourier', label: 'Fourier Transform', x: 50, y: 85, chapterId: 'freq_basics', category: 'advanced' },
 ];
 
