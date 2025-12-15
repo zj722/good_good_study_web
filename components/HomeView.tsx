@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Subject } from '../types';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { NavigationBar } from './NavigationBar';
+import { useAuth } from '../context/AuthContext';
+import { AuthModal } from './AuthModal';
 
 interface HomeViewProps {
   subjects: Subject[];
@@ -33,11 +35,13 @@ const contentOptions = [
 ];
 
 export const HomeView: React.FC<HomeViewProps> = ({ subjects, onSelectSubject, onNavigate }) => {
+  const { user } = useAuth();
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [selectedContents, setSelectedContents] = useState<string[]>([]);
   const [customSubject, setCustomSubject] = useState('');
   const [customContent, setCustomContent] = useState('');
   const [suggestionNotes, setSuggestionNotes] = useState('');
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const toggleSelection = (value: string, setter: React.Dispatch<React.SetStateAction<string[]>>) => {
     setter(prev => (prev.includes(value) ? prev.filter(item => item !== value) : [...prev, value]));
@@ -70,8 +74,17 @@ export const HomeView: React.FC<HomeViewProps> = ({ subjects, onSelectSubject, o
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
-            <button className="rounded-full border border-slate-200 bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-200 hover:bg-slate-800 transition">
-              注册
+            <button
+              onClick={() => {
+                if (user) {
+                  onNavigate('/courses');
+                } else {
+                  setShowAuthModal(true);
+                }
+              }}
+              className="rounded-full border border-slate-200 bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:bg-slate-800 transition"
+            >
+              {user ? '进入课程' : '注册 / 登录'}
             </button>
           </div>
 
@@ -228,6 +241,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ subjects, onSelectSubject, o
           </div>
         </section>
       </main>
+      <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );
 };

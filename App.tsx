@@ -12,6 +12,7 @@ import { DonatePage } from './components/DonatePage';
 import { LessonComplexNumbers } from './components/LessonComplexNumbers';
 import { SUBJECTS, CHAPTERS } from './constants';
 import { ViewState } from './types';
+import { AuthProvider } from './context/AuthContext';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<ViewState>('HOME');
@@ -102,8 +103,10 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopstate);
   }, []);
 
+  let page: React.ReactNode = null;
+
   if (route === '/courses') {
-    return (
+    page = (
       <CoursesPage
         subjects={SUBJECTS}
         onSelectSubject={handleCourseCardSelect}
@@ -111,74 +114,66 @@ export default function App() {
         onNavigate={navigateTo}
       />
     );
-  }
-
-  if (route === '/about') {
-    return <AboutPage onNavigate={navigateTo} />;
-  }
-
-  if (route === '/suggestions') {
-    return <SuggestionsPage onNavigate={navigateTo} />;
-  }
-
-  if (route === '/join') {
-    return <JoinPage onNavigate={navigateTo} />;
-  }
-
-  if (route === '/donate') {
-    return <DonatePage onNavigate={navigateTo} />;
-  }
-
-  return (
-    <div className="bg-white min-h-screen font-sans text-slate-900">
-      <AnimatePresence mode="wait">
-
-        {currentView === 'HOME' && (
-          <HomeView
-            key="home"
-            subjects={SUBJECTS}
-            onSelectSubject={handleSubjectSelect}
-            onNavigate={handleNavigateLink}
-          />
-        )}
-
-        {currentView === 'CHAPTERS' && currentSubject && (
-          <ChapterView
-            key="chapters"
-            subjectTitle={currentSubject.title}
-            chapters={subjectChapters}
-            onSelectChapter={handleChapterSelect}
-            onBack={goHome}
-          />
-        )}
-
-        {currentView === 'MAP' && selectedChapterId && (
-          <MapView
-            key="map"
-            chapterId={selectedChapterId}
-            onBack={goBackToChapters}
-            onStartLesson={handleStartLesson}
-          />
-        )}
-
-        {currentView === 'CONTENT' && selectedNodeId && (
-          selectedNodeId === 'complex' ? (
-            <LessonComplexNumbers
-              key="lesson-complex"
-              onBack={goBackToMap}
-              onHome={goHome}
+  } else if (route === '/about') {
+    page = <AboutPage onNavigate={navigateTo} />;
+  } else if (route === '/suggestions') {
+    page = <SuggestionsPage onNavigate={navigateTo} />;
+  } else if (route === '/join') {
+    page = <JoinPage onNavigate={navigateTo} />;
+  } else if (route === '/donate') {
+    page = <DonatePage onNavigate={navigateTo} />;
+  } else {
+    page = (
+      <div className="bg-white min-h-screen font-sans text-slate-900">
+        <AnimatePresence mode="wait">
+          {currentView === 'HOME' && (
+            <HomeView
+              key="home"
+              subjects={SUBJECTS}
+              onSelectSubject={handleSubjectSelect}
+              onNavigate={handleNavigateLink}
             />
-          ) : (
-            <ContentView
-              key="content"
-              nodeId={selectedNodeId}
-              onBackToMap={goBackToMap}
-              onHome={goHome}
-            />
-          )
-        )}
+          )}
 
-      </AnimatePresence>
-    </div>
-  );
+          {currentView === 'CHAPTERS' && currentSubject && (
+            <ChapterView
+              key="chapters"
+              subjectTitle={currentSubject.title}
+              chapters={subjectChapters}
+              onSelectChapter={handleChapterSelect}
+              onBack={goHome}
+            />
+          )}
+
+          {currentView === 'MAP' && selectedChapterId && (
+            <MapView
+              key="map"
+              chapterId={selectedChapterId}
+              onBack={goBackToChapters}
+              onStartLesson={handleStartLesson}
+            />
+          )}
+
+          {currentView === 'CONTENT' && selectedNodeId && (
+            selectedNodeId === 'complex' ? (
+              <LessonComplexNumbers
+                key="lesson-complex"
+                onBack={goBackToMap}
+                onHome={goHome}
+              />
+            ) : (
+              <ContentView
+                key="content"
+                nodeId={selectedNodeId}
+                onBackToMap={goBackToMap}
+                onHome={goHome}
+              />
+            )
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  }
+
+  return <AuthProvider>{page}</AuthProvider>;
 }
